@@ -42,22 +42,20 @@ fi
 
 mkdir -p .cb2pdf
 
-ORIGINAL_CB_FILE=$( echo "$ORIGINAL_CB_FILE" | sed 's/ /\\ /g' )
-ORIGINAL_BASENAME=$( echo "$ORIGINAL_BASENAME" | sed 's/ /\\ /g' )
 ORIGINAL_EXTENSION=$(printf "%s" "$ORIGINAL_EXTENSION" | tr "[:upper:]" "[:lower:]")
 
-eval cp "$ORIGINAL_CB_FILE" ".cb2pdf/"
+cp "$1" ".cb2pdf/"
 
-COPIED_CBR_FILE=".cb2pdf/$ORIGINAL_CB_FILE"
+COPIED_CB_FILE=".cb2pdf/$1"
 COPIED_RAR_FILE=".cb2pdf/$ORIGINAL_BASENAME.rar"
 COPIED_PDF_FILE="$ORIGINAL_BASENAME.pdf"
 
-eval mv "$COPIED_CBR_FILE" "$COPIED_RAR_FILE"
+mv "$COPIED_CB_FILE" "$COPIED_RAR_FILE"
 
-eval unrar e "$COPIED_RAR_FILE" ".cb2pdf/" > /dev/null 2>&1
+unrar e "$COPIED_RAR_FILE" ".cb2pdf/" > /dev/null 2>&1
 
 rm -f "$COPIED_PDF_FILE"
-eval convert ".cb2pdf/*.jpg" ".cb2pdf/*.JPG" "$COPIED_PDF_FILE" > /dev/null 2>&1
+convert ".cb2pdf/*.jpg" ".cb2pdf/*.JPG" "$COPIED_PDF_FILE" > /dev/null 2>&1
 
 rm -rf .cb2pdf
 

@@ -40,6 +40,15 @@ if ! _is_valid_cb_file "$ORIGINAL_CB_FILE" "$ORIGINAL_EXTENSION" ; then
     printf "${ERROR_STYLE}Error. The parsed file $1 is not a valid comic book file due to its extension ${ORIGINAL_EXTENSION}!${END_STYLE}${BR}" 1>&2 && exit 1
 fi
 
+case $ORIGINAL_EXTENSION in
+	cbr)
+		TYPE_ARCHIVE="rar"
+		;;
+	cbz)
+		TYPE_ARCHIVE="zip"
+		;;
+esac
+
 mkdir -p .cb2pdf
 
 ORIGINAL_EXTENSION=$(printf "%s" "$ORIGINAL_EXTENSION" | tr "[:upper:]" "[:lower:]")
@@ -47,12 +56,19 @@ ORIGINAL_EXTENSION=$(printf "%s" "$ORIGINAL_EXTENSION" | tr "[:upper:]" "[:lower
 cp "$1" ".cb2pdf/"
 
 COPIED_CB_FILE=".cb2pdf/$1"
-COPIED_RAR_FILE=".cb2pdf/$ORIGINAL_BASENAME.rar"
+COPIED_ARCHIVE_FILE=".cb2pdf/$ORIGINAL_BASENAME.$TYPE_ARCHIVE"
 COPIED_PDF_FILE="$ORIGINAL_BASENAME.pdf"
 
-mv "$COPIED_CB_FILE" "$COPIED_RAR_FILE"
+mv "$COPIED_CB_FILE" "$COPIED_ARCHIVE_FILE"
 
-unrar e "$COPIED_RAR_FILE" ".cb2pdf/" > /dev/null 2>&1
+case $ORIGINAL_EXTENSION in
+	cbr)
+		unrar e "$COPIED_ARCHIVE_FILE" ".cb2pdf/" > /dev/null 2>&1
+		;;
+	cbz)
+		unzip "$COPIED_ARCHIVE_FILE" -d ".cb2pdf/" > /dev/null 2>&1
+		;;
+esac
 
 rm -f "$COPIED_PDF_FILE"
 convert ".cb2pdf/*.jpg" ".cb2pdf/*.JPG" "$COPIED_PDF_FILE" > /dev/null 2>&1

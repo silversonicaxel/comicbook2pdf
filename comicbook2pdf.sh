@@ -27,6 +27,24 @@ _is_valid_cb_file()
     return 1
 }
 
+_is_unrar_available()
+{
+    if ! unrar -v &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+_is_unzip_available()
+{
+    if ! unzip -v &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 ORIGINAL_CB_FILE="$1"
 ORIGINAL_BASENAME=$(basename -- "$ORIGINAL_CB_FILE")
 ORIGINAL_EXTENSION="${ORIGINAL_BASENAME##*.}"
@@ -38,6 +56,14 @@ fi
 
 if ! _is_valid_cb_file "$ORIGINAL_CB_FILE" "$ORIGINAL_EXTENSION" ; then
     printf "${ERROR_STYLE}Error. The parsed file $1 is not a valid comic book file due to its extension ${ORIGINAL_EXTENSION}!${END_STYLE}${BR}" 1>&2 && exit 1
+fi
+
+if ! _is_unrar_available; then
+    printf "${ERROR_STYLE}Error. The command 'unrar' is not installed!${END_STYLE}${BR}" 1>&2 && exit 1
+fi
+
+if ! _is_unzip_available; then
+    printf "${ERROR_STYLE}Error. The command 'unzip' is not installed!${END_STYLE}${BR}" 1>&2 && exit 1
 fi
 
 case $ORIGINAL_EXTENSION in

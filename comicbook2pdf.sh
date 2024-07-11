@@ -27,6 +27,15 @@ _is_valid_cb_file()
     return 1
 }
 
+_is_convert_available()
+{
+    if ! magick convert -version &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 _is_unrar_available()
 {
     if ! unrar -v &> /dev/null; then
@@ -97,7 +106,7 @@ case $ORIGINAL_EXTENSION in
 esac
 
 rm -f "$COPIED_PDF_FILE"
-convert ".cb2pdf/*.jpg" ".cb2pdf/*.JPG" "$COPIED_PDF_FILE" > /dev/null 2>&1
+magick convert ".cb2pdf/*.*" "$COPIED_PDF_FILE" > /dev/null 2>&1
 
 rm -rf .cb2pdf
 
